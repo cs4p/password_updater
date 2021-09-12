@@ -37,17 +37,17 @@ def writeYAML(s, f):
     file.close()
 
 def export_puppet_config(password):
-    # I think this would work, but I didn't test it becase I don't ahve an instance of puppet
+    # I think this would work, but I didn't test it becase I don't have an instance of puppet
     return "user\n{'fallback':\n  ensure = > present,\n  password = > '" + hashPassword(password) + "'\n}"
 
 
-def ssh_change_password(host, ssh_user, ssh_password, new_password):
+def ssh_change_password(host, ssh_user, ssh_password, new_password, user_to_change):
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh_client.connect(hostname=host,
                        username=ssh_user,
                        password=ssh_password)
-    cmd = 'echo "' + new_password + '" | passwd --stdin fallback'
+    cmd = 'echo "' + new_password + '" | passwd --stdin ' + user_to_change
     stdin, stdout, stderr = ssh_client.exec_command(cmd)
 
     out = stdout.read().decode().strip()
@@ -73,5 +73,5 @@ def updatePassword(server):
 
     ssh_user_credentials = loadYAML('config.yaml')
 
-    ssh_change_password(server,ssh_user_credentials['ssh_user'],ssh_user_credentials['ssh_password'],new_password[0]['password'])
+    ssh_change_password(server,ssh_user_credentials['ssh_user'],ssh_user_credentials['ssh_password'],new_password[0]['password'],ssh_user_credentials['user_to_change'])
     return 'password changed'

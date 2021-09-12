@@ -1,2 +1,3 @@
 ssh_user: 'root_user'
 ssh_password: 'root_user_password'
+user_to_change: 'account to change password on'
